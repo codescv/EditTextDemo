@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 #import "SSMSComposeViewController.h"
-#import "MockDataSource.h"
+#import "AddressBookDataSource.h"
 #import "Three20UI/TTMessageController.h"
 
 // UI
@@ -72,7 +72,7 @@
                                                    action: @selector(send)] autorelease];
         self.navigationItem.rightBarButtonItem.enabled = NO;
         self.delegate = self;
-        self.dataSource = [[MockDataSource alloc] init];
+        self.dataSource = [[AddressBookDataSource alloc] init];
     }
     
     return self;
@@ -430,12 +430,17 @@ replacementString:(NSString *)string {
     return YES;
 }
 
+- (NSString *)filterNonDigitOfString:(NSString *)target {
+    return [[target componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
+            componentsJoinedByString:@""];
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    NSString *text = textField.text;
+    NSString *text = [self filterNonDigitOfString:textField.text];
     if (![text isEmptyOrWhitespace]) {
-        [self addRecipient:text forFieldAtIndex:0];
+        AddressBookEntry *entry = [[[AddressBookEntry alloc] initWithName:nil phoneNumber:text] autorelease];
+        [self addRecipient:entry forFieldAtIndex:0];
     }
     return NO;
 }
@@ -753,7 +758,7 @@ replacementString:(NSString *)string {
  * choosing a contact, that contact should be added to the field.
  */
 - (void)composeControllerShowRecipientPicker:(TTMessageController*)controller {
-
+    // TODO: show contact picker
 }
 
 @end

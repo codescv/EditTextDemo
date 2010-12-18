@@ -17,7 +17,7 @@
 		28D7ACF80DDB3853001CB0EB /* EditTextDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* EditTextDemoViewController.m */; };
 		6986E9C512BCC67400C815C4 /* SSMSComposeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6986E9C312BCC67400C815C4 /* SSMSComposeViewController.m */; };
 		6986E9C612BCC67400C815C4 /* SSMSComposeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6986E9C412BCC67400C815C4 /* SSMSComposeViewController.xib */; };
-		6986EADB12BCDA1900C815C4 /* MockDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 6986EADA12BCDA1900C815C4 /* MockDataSource.m */; };
+		6986EADB12BCDA1900C815C4 /* AddressBookDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 6986EADA12BCDA1900C815C4 /* AddressBookDataSource.m */; };
 		6989570912BC4610005D945C /* libThree20.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6989564912BC456A005D945C /* libThree20.a */; };
 		6989570A12BC4613005D945C /* libThree20Core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 698956A412BC45C2005D945C /* libThree20Core.a */; };
 		6989570B12BC4624005D945C /* libThree20UI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 698956FE12BC45C2005D945C /* libThree20UI.a */; };
@@ -349,8 +349,8 @@
 		6986E9C212BCC67400C815C4 /* SSMSComposeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSMSComposeViewController.h; sourceTree = "<group>"; };
 		6986E9C312BCC67400C815C4 /* SSMSComposeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSMSComposeViewController.m; sourceTree = "<group>"; };
 		6986E9C412BCC67400C815C4 /* SSMSComposeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SSMSComposeViewController.xib; path = Classes/SSMSComposeViewController.xib; sourceTree = "<group>"; };
-		6986EAD912BCDA1900C815C4 /* MockDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockDataSource.h; sourceTree = "<group>"; };
-		6986EADA12BCDA1900C815C4 /* MockDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockDataSource.m; sourceTree = "<group>"; };
+		6986EAD912BCDA1900C815C4 /* AddressBookDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddressBookDataSource.h; sourceTree = "<group>"; };
+		6986EADA12BCDA1900C815C4 /* AddressBookDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddressBookDataSource.m; sourceTree = "<group>"; };
 		6989561912BC4569005D945C /* Three20.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Three20.xcodeproj; path = ../three20/src/Three20/Three20.xcodeproj; sourceTree = SOURCE_ROOT; };
 		6989568B12BC45C2005D945C /* Three20Core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Three20Core.xcodeproj; path = ../three20/src/Three20Core/Three20Core.xcodeproj; sourceTree = SOURCE_ROOT; };
 		6989568E12BC45C2005D945C /* Three20Network.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Three20Network.xcodeproj; path = ../three20/src/Three20Network/Three20Network.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -388,8 +388,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				6986EAD912BCDA1900C815C4 /* MockDataSource.h */,
-				6986EADA12BCDA1900C815C4 /* MockDataSource.m */,
+				6986EAD912BCDA1900C815C4 /* AddressBookDataSource.h */,
+				6986EADA12BCDA1900C815C4 /* AddressBookDataSource.m */,
 				1D3623240D0F684500981E51 /* EditTextDemoAppDelegate.h */,
 				1D3623250D0F684500981E51 /* EditTextDemoAppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* EditTextDemoViewController.h */,
@@ -953,7 +953,7 @@
 				1D3623260D0F684500981E51 /* EditTextDemoAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* EditTextDemoViewController.m in Sources */,
 				6986E9C512BCC67400C815C4 /* SSMSComposeViewController.m in Sources */,
-				6986EADB12BCDA1900C815C4 /* MockDataSource.m in Sources */,
+				6986EADB12BCDA1900C815C4 /* AddressBookDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
