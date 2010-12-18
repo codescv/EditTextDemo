@@ -9,10 +9,15 @@
     }
     return self;
 }
+
 - (void)dealloc {
     [super dealloc];
     [_name release];
     [_phoneNumber release];
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@(%@)", self.name, self.phoneNumber];
 }
 @end
 
@@ -26,7 +31,7 @@
         } else {
             return entry.name;
         }
-
+        
     }
     return [object description];
 }
