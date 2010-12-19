@@ -1,54 +1,19 @@
 //
-// Copyright 2009-2010 Facebook
+//  SSMSComposeViewController.m
+//  SSMSComposeViewController
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//  Created by Chi Zhang on 12/17/10.
+//  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 #import "SSMSComposeViewController.h"
 #import "AddressBookDataSource.h"
-#import "Three20UI/TTMessageController.h"
-
-// UI
-#import "Three20UI/TTMessageControllerDelegate.h"
-#import "Three20UI/TTMessageRecipientField.h"
-#import "Three20UI/TTMessageTextField.h"
-#import "Three20UI/TTActivityLabel.h"
-#import "Three20UI/TTPickerTextField.h"
-#import "Three20UI/TTTextEditor.h"
-#import "Three20UI/TTTableViewDataSource.h"
-#import "Three20UI/UIViewAdditions.h"
-
-// UINavigator
-#import "Three20UINavigator/TTGlobalNavigatorMetrics.h"
-
-// UICommon
-#import "Three20UICommon/TTGlobalUICommon.h"
-#import "Three20UICommon/UIViewControllerAdditions.h"
-
-// Style
-#import "Three20Style/TTGlobalStyle.h"
-#import "Three20Style/TTDefaultStyleSheet.h"
-
-// Core
-#import "Three20Core/TTCorePreprocessorMacros.h"
-#import "Three20Core/TTGlobalCoreLocale.h"
-#import "Three20Core/TTGlobalCoreRects.h"
 #import "Three20Core/NSStringAdditions.h"
 
-
-
 @implementation SSMSComposeViewController
+@synthesize startClean;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark UIViewController
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [_fields release];
@@ -67,19 +32,19 @@
     return self;
 }
 
-#pragma mark -
-#pragma mark Private
 - (void)loadView {
+    //NSLog(@"loadview");
     [super loadView];
     UIView *view = [self viewForFieldAtIndex:0];
     if ([view isKindOfClass:[TTPickerTextField class]]) {
         TTPickerTextField *field = (TTPickerTextField *)view;
         field.returnKeyType = UIReturnKeyDefault;
     }
-    _textEditor.text = @"Click Here To add Content";
+    if (startClean) {
+        _textEditor.text = @"Click Here To add Content";
+    }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark UITextFieldDelegate
 
@@ -93,7 +58,6 @@ replacementString:(NSString *)string {
             componentsJoinedByString:@""];
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     NSString *text = [self filterNonDigitOfString:textField.text];
     if (![text isEmptyOrWhitespace]) {
@@ -103,7 +67,6 @@ replacementString:(NSString *)string {
     return NO;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0) {
         [self cancel:NO];
@@ -111,10 +74,13 @@ replacementString:(NSString *)string {
 }
 
 - (void)textEditorDidBeginEditing:(TTTextEditor*)textEditor {
-    textEditor.text = @"";
+    if (startClean) {
+        textEditor.text = @"";
+    }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark private
 - (void)send {
     NSLog(@"content: %@", _textEditor.text);
     TTPickerTextField *textField = [_fieldViews objectAtIndex:0];
@@ -136,7 +102,7 @@ replacementString:(NSString *)string {
 }
 
 - (void)composeControllerShowRecipientPicker:(TTMessageController*)controller {
-    // TODO
+    // TODO show contact picker
 }
 
 @end
