@@ -46,16 +46,75 @@
 }
 
 #pragma mark -
-#pragma mark UITextFieldDelegate
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range
-replacementString:(NSString *)string {
-    return YES;
+#pragma mark private
+- (TTPickerTextField *)recipientsField {
+    return [_fieldViews objectAtIndex:0];
 }
 
 - (NSString *)filterNonDigitOfString:(NSString *)target {
     return [[target componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
             componentsJoinedByString:@""];
+}
+
+- (void)send {
+    NSLog(@"content: %@", self.body);
+    TTPickerTextField *recipientsField = [self recipientsField];
+    
+    NSString *enteredNumber = [self filterNonDigitOfString:recipientsField.text];
+    if (![enteredNumber isEmptyOrWhitespace]) {
+        [self addRecipient:[[AddressBookEntry alloc] initWithName:nil phoneNumber:enteredNumber] forFieldAtIndex:0];
+    }
+    NSLog(@"recipients: %@", recipientsField.cells);
+}
+
+- (void)confirmCancellation {
+    UIAlertView* cancelAlertView = [[[UIAlertView alloc] initWithTitle:
+                                     TTLocalizedString(@"Cancel", @"")
+                                                               message:TTLocalizedString(@"Are you sure you want to cancel?", @"")
+                                                              delegate:self
+                                                     cancelButtonTitle:TTLocalizedString(@"Yes", @"")
+                                                     otherButtonTitles:TTLocalizedString(@"No", @""), nil] autorelease];
+    [cancelAlertView show];
+}
+
+- (BOOL)hasRequiredTextWithRecipientsField:(NSString *)recipientsFieldText {
+    if ([self.body isEmptyOrWhitespace]) {
+        return NO;
+    }
+    NSString *enteredNumber = [self filterNonDigitOfString:recipientsFieldText];
+    if ([enteredNumber isEmptyOrWhitespace] && [[self recipientsField].cells count] == 0) {
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)hasRequiredText {
+    return [self hasRequiredTextWithRecipientsField:[self recipientsField].text];
+}
+
+- (void) updateSendCommand {
+    if ([self hasRequiredText]) {
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    } else {
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+    }
+}
+
+#pragma mark -
+#pragma mark UITextFieldDelegate
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range
+replacementString:(NSString *)string {
+    NSString *beforeChange = textField.text;
+    NSString *invariable = [beforeChange substringToIndex:range.location];
+    NSString *afterChange = [invariable stringByAppendingString:string];
+    // update send command validity
+    if ([self hasRequiredTextWithRecipientsField:afterChange]) {
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    } else {
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+    }
+    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -79,27 +138,6 @@ replacementString:(NSString *)string {
     }
 }
 
-#pragma mark -
-#pragma mark private
-- (void)send {
-    NSLog(@"content: %@", _textEditor.text);
-    TTPickerTextField *textField = [_fieldViews objectAtIndex:0];
-    NSLog(@"recipients: %@", textField.cells);
-    NSLog(@"text: %@", textField.text);
-    for (AddressBookEntry *entry in textField.cells) {
-        NSLog(@"%@", entry.phoneNumber);
-    }
-}
-
-- (void)confirmCancellation {
-    UIAlertView* cancelAlertView = [[[UIAlertView alloc] initWithTitle:
-                                     TTLocalizedString(@"Cancel", @"")
-                                                               message:TTLocalizedString(@"Are you sure you want to cancel?", @"")
-                                                              delegate:self
-                                                     cancelButtonTitle:TTLocalizedString(@"Yes", @"")
-                                                     otherButtonTitles:TTLocalizedString(@"No", @""), nil] autorelease];
-    [cancelAlertView show];
-}
 
 - (void)composeControllerShowRecipientPicker:(TTMessageController*)controller {
     // TODO show contact picker
