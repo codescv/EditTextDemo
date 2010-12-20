@@ -33,12 +33,12 @@
 }
 
 - (void)loadView {
-    //NSLog(@"loadview");
     [super loadView];
     UIView *view = [self viewForFieldAtIndex:0];
     if ([view isKindOfClass:[TTPickerTextField class]]) {
         TTPickerTextField *field = (TTPickerTextField *)view;
         field.returnKeyType = UIReturnKeyDefault;
+		field.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     }
     if (startClean) {
         _textEditor.text = @"Click Here To add Content";
@@ -56,15 +56,19 @@
             componentsJoinedByString:@""];
 }
 
-- (void)send {
-    NSLog(@"content: %@", self.body);
-    TTPickerTextField *recipientsField = [self recipientsField];
-    
-    NSString *enteredNumber = [self filterNonDigitOfString:recipientsField.text];
+- (void)commitTypedPhoneNumber {
+	TTPickerTextField *recipientsField = [self recipientsField];
+	NSString *enteredNumber = [self filterNonDigitOfString:recipientsField.text];
     if (![enteredNumber isEmptyOrWhitespace]) {
         [self addRecipient:[[AddressBookEntry alloc] initWithName:nil phoneNumber:enteredNumber] forFieldAtIndex:0];
-    }
-    NSLog(@"recipients: %@", recipientsField.cells);
+    }	
+}
+
+- (void)send {
+    NSLog(@"content: %@", self.body);
+	[self commitTypedPhoneNumber];
+    TTPickerTextField *recipientsField = [self recipientsField];
+	NSLog(@"recipients: %@", recipientsField.cells);
 }
 
 - (void)confirmCancellation {
@@ -92,12 +96,17 @@
     return [self hasRequiredTextWithRecipientsField:[self recipientsField].text];
 }
 
-- (void) updateSendCommand {
+- (void)updateSendCommand {
     if ([self hasRequiredText]) {
         self.navigationItem.rightBarButtonItem.enabled = YES;
     } else {
         self.navigationItem.rightBarButtonItem.enabled = NO;
     }
+}
+
+- (void)addContactWithName:(NSString *)name phoneNumber:(NSString *)phoneNumber {
+	AddressBookEntry *entry = [[[AddressBookEntry alloc] initWithName:name phoneNumber:phoneNumber] autorelease];
+	[self addRecipient:entry forFieldAtIndex:0];
 }
 
 #pragma mark -
@@ -135,12 +144,87 @@ replacementString:(NSString *)string {
 - (void)textEditorDidBeginEditing:(TTTextEditor*)textEditor {
     if (startClean) {
         textEditor.text = @"";
+		// next time it won't be cleared
+		startClean = NO;
     }
 }
 
 
 - (void)composeControllerShowRecipientPicker:(TTMessageController*)controller {
-    // TODO show contact picker
+    // show contact picker
+	[self commitTypedPhoneNumber];
+	ABPeoplePickerNavigationController *picker =
+	[[ABPeoplePickerNavigationController alloc] init];
+    picker.peoplePickerDelegate = self;
+	[picker setDisplayedProperties:[NSArray arrayWithObject:[NSNumber numberWithInt:kABPersonPhoneProperty]]];
+    [self presentModalViewController:picker animated:YES];
+    [picker release];
 }
+
+#pragma mark -
+#pragma mark Contact Picker Delegate Methods
+- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+- (NSString *)makeFullNameByFirstName:(NSString *)firstName lastName:(NSString *)lastName {
+	if (firstName == nil) {
+		if (lastName == nil) {
+			return @"";
+		} else {
+			return lastName;
+		}
+	} else {
+		if (lastName == nil) {
+			return firstName;
+		} else {
+			return [NSString stringWithFormat:@"%@%@", firstName, lastName];
+		}
+	}
+}
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person {
+	ABMutableMultiValueRef multi = ABRecordCopyValue(person, kABPersonPhoneProperty);
+	int numberOfPhoneNumbers = ABMultiValueGetCount(multi);
+	BOOL shouldContinue = NO;
+	if (numberOfPhoneNumbers == 1) {
+		NSString *address = (NSString *)ABMultiValueCopyValueAtIndex(multi, 0);
+		NSString *firstName = (NSString *)ABRecordCopyValue(person,	kABPersonFirstNameProperty);
+		NSString *lastName = (NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
+		NSString *fullName = [self makeFullNameByFirstName:firstName lastName:lastName];
+		[self addContactWithName:fullName phoneNumber:address];
+		[address release];
+		[firstName release];
+		[lastName release];
+		shouldContinue = NO;
+		[self dismissModalViewControllerAnimated:YES];
+	} else if (numberOfPhoneNumbers > 1) {
+		shouldContinue = YES;
+	} else {
+		shouldContinue = NO;
+	}
+	CFRelease(multi);
+    return shouldContinue;
+}
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person
+                                property:(ABPropertyID)property
+                              identifier:(ABMultiValueIdentifier)identifier{
+    ABMultiValueRef multi = ABRecordCopyValue(person, property);
+	NSString *address = (NSString *)ABMultiValueCopyValueAtIndex(multi, identifier);
+	NSString *firstName = (NSString *)ABRecordCopyValue(person,	kABPersonFirstNameProperty);
+	NSString *lastName = (NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
+	NSString *fullName = [self makeFullNameByFirstName:firstName lastName:lastName];
+	[self addContactWithName:fullName phoneNumber:address];
+	[address release];
+	[firstName release];
+	[lastName release];
+	[self dismissModalViewControllerAnimated:YES];
+	CFRelease(multi);
+	return NO;
+}
+
 
 @end

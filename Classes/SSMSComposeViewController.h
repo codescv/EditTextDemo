@@ -9,8 +9,11 @@
 #import "Three20UI/TTTextEditorDelegate.h"
 #import "TTMessageController.h"
 #import "TTMessageControllerDelegate.h"
+#import <AddressBook/AddressBook.h>
+#import <AddressBookUI/AddressBookUI.h>
 
-@interface SSMSComposeViewController : TTMessageController <TTMessageControllerDelegate, UITextFieldDelegate, TTTextEditorDelegate> {
+
+@interface SSMSComposeViewController : TTMessageController <TTMessageControllerDelegate, UITextFieldDelegate, TTTextEditorDelegate, ABPeoplePickerNavigationControllerDelegate> {
     BOOL startClean;
 }
 /* In clean mode, a 'type here' indicator will be shown in the content field which goes away
